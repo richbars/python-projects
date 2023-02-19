@@ -1,2 +1,2 @@
 # python-projects
-tests
+testsx2
