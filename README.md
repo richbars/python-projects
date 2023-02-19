@@ -1,3 +1,3 @@
 # Projects Python
 
-###  1 - Calculadora
+###  1 - Calculadoras
