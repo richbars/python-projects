@@ -1,0 +1,20 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - development
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v2
+      with:
+        ref: main
+        fetch-depth: 0
+    - name: Merge development into main
+      run: |
+        git config --global user.email "richard.santos21@hotmail.com"
+        git config --global user.name "Richard Santos"
+        git merge development
+        git push
