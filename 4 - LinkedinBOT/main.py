@@ -1,54 +1,59 @@
 from selenium import webdriver
 import time
 import logging
+from pwinput import pwinput
 from selenium.webdriver.remote.remote_connection import LOGGER
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 
 LOGGER.setLevel(logging.CRITICAL)
-# Define as credenciais de login
-email = input("Coloque seu email do Linkedin: ")
-senha = input("Coloque sua senha do Linkedin: ")
-funcao = input("Escolhe o cargo que queira se conectar: ")
-qtd_desejadas = int(input("Escolha a quantidade de pessoas que queira se conectar: "))
+
+email = input("Enter your Linkedin email: ")
+password = input("Enter your Linkedin password: ")
+role = input("Choose which role you want to connect: ")
+qtd_desejadas = int(input("Choose the number of people you want to connect: "))
 
 
 
-# Configura o driver do Chrome
+
 driver = webdriver.Chrome()
 
 
-# Abre o LinkedIn e faz login
+
 driver.get('https://www.linkedin.com/login')
-time.sleep(5)
-driver.find_element(By.ID, 'username').send_keys(email)
-driver.find_element(By.ID, 'password').send_keys(senha)
-driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
+email_field = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.ID, "username")))
+email_field.send_keys(email)
+pass_field = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.ID, "password")))
+pass_field.send_keys(password)
+submit_login = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.CSS_SELECTOR, "button[type='submit']")))
+submit_login.click()
 
-# Aguarda o login ser concluído
-time.sleep(5)
+time.sleep(1)
 
-# Acessa o perfil a ser seguido e clica no botão "Seguir"
-driver.get("https://www.linkedin.com/search/results/people/?keywords={0}&origin=GLOBAL_SEARCH_HEADER&page=1".format(funcao))
-time.sleep(3)
+driver.get("https://www.linkedin.com/search/results/people/?keywords={0}&origin=GLOBAL_SEARCH_HEADER&page=1".format(role))
+time.sleep(5)
 
 contador = 1
 contador_conectadas = 0
+
 while True:
-    buttons = driver.find_elements(By.XPATH, "//button[contains(.,'Conectar')]")
+    #buttons = driver.find_elements(By.XPATH, "//button[contains(.,'Conectar')]")
+    buttons = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.XPATH, "//button[contains(.,'Conectar')]")))
 
     for conectar in buttons:
-        time.sleep(3)
         print(conectar)
         conectar.click()
-        time.sleep(3)
-        driver.find_element(By.XPATH, "//button[contains(.,'Enviar')]").click()
-        time.sleep(3)
+        #driver.find_element(By.XPATH, "//button[contains(.,'Enviar')]").click()
+        submit_btn = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(.,'Enviar')]")))
+        submit_btn.click()
 
     quantidade = len(buttons)
     contador_conectadas += quantidade
     print(contador_conectadas)
     contador += 1
-    driver.get(f"https://www.linkedin.com/search/results/people/?keywords={funcao}&origin=GLOBAL_SEARCH_HEADER&page={contador}")
+    driver.get(f"https://www.linkedin.com/search/results/people/?keywords={role}&origin=GLOBAL_SEARCH_HEADER&page={contador}")
     time.sleep(5)
 
     if contador_conectadas >= qtd_desejadas:
