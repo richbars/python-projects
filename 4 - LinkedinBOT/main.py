@@ -1,7 +1,6 @@
 from selenium import webdriver
 import time
 import logging
-from pwinput import pwinput
 from selenium.webdriver.remote.remote_connection import LOGGER
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -15,9 +14,9 @@ role = input("Choose which role you want to connect: ")
 qtd_desejadas = int(input("Choose the number of people you want to connect: "))
 
 
+path_chrome = "chromedriver.exe"
 
-
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(executable_path=path_chrome)
 
 
 
