@@ -1,0 +1,99 @@
+import tkinter as tk
+from tkinter import ttk
+from ttkthemes import ThemedTk
+
+class Application():
+
+    def __init__(self, root):
+
+        self.root = root
+        self.root.title("CCaaS Tools v1")
+        self.root.resizable(False, False)
+        self.criar_abas()
+
+
+
+    def criar_abas(self):
+
+        self.getAmbiente = tk.StringVar()
+        self.getMethod = tk.StringVar()
+        self.getAmbiente.set("develop")
+        self.getMethod.set("personid")
+
+        self.tabControl = ttk.Notebook(self.root)
+
+        # Aba 1
+        self.cadastropessoas = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.cadastropessoas, text="Cadastro de Pessoas")
+        
+        # Aba 2
+        self.listacartoes = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.listacartoes, text="Lista Cartoes")
+
+        # Aba 3
+        self.portalmassa = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.portalmassa, text="Portal de Massas")
+
+        # Aba 4
+        self.sobre = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.sobre, text="Sobre")
+
+        # Adiciona evento para salvar configurações antes de mudar de aba
+        self.tabControl.bind("<<NotebookTabChanged>>", self.on_change_tab)
+
+
+        #Labels - CadastroPessoas
+        txtAreaMethod = tk.Text(self.cadastropessoas, height=1, width=35)
+        self.lblMethod = ttk.Label(self.cadastropessoas, text="Digite o CPF:")
+
+        #Botoes - CadastroPessoas
+        btnConsultar = ttk.Button(self.cadastropessoas, text="Consultar")
+
+        #Paineis - CadastroPessoas
+        pnAmbiente = ttk.LabelFrame(self.cadastropessoas, text="Escolha o ambiente")
+        pnMethod = ttk.LabelFrame(self.cadastropessoas, text="Escolha o metodo")
+
+        #RadioButtons - CadastroPessoas
+        rb_desenvolvimento = ttk.Radiobutton(pnAmbiente, text="Desenvolvimento", variable=self.getAmbiente, value="develop")
+        rb_homologacao = ttk.Radiobutton(pnAmbiente, text="Homologação", variable=self.getAmbiente, value="homolog")
+        rb_personid = ttk.Radiobutton(pnMethod, text="Coletar PersonId", variable=self.getMethod, value="personid", command=self.updateLabel)
+        rb_cpf = ttk.Radiobutton(pnMethod, text="Coletar CPF", variable=self.getMethod, value="cpf", command=self.updateLabel)
+
+        #Packs - CadastroPessoas
+        rb_desenvolvimento.pack(side=tk.TOP, anchor="w", pady=5, padx=10)
+        rb_homologacao.pack(side=tk.TOP, anchor="w", pady=10, padx=10)
+        rb_personid.pack(side=tk.TOP, anchor="w", pady=5, padx=10)
+        rb_cpf.pack(side=tk.TOP, anchor="w", pady=10, padx=10)
+        pnAmbiente.place(x=30, y=10)
+        pnMethod.place(x=200, y=10)
+        btnConsultar.place(x=135, y=195)
+        txtAreaMethod.place(x=40, y=150)
+        self.lblMethod.place(x=40, y=130)
+
+
+        self.tabControl.pack(expand=True, fill="both")
+
+    def on_change_tab(self, event):
+        current_tab = self.tabControl.index(self.tabControl.select())
+        if current_tab == 0:
+            self.root.geometry("380x270")
+        elif current_tab == 1:
+            self.root.geometry("430x540")
+        elif current_tab == 2:
+            self.root.geometry("900x800")
+
+    def updateLabel(self):
+
+        metodo_selecionado = self.getMethod.get()
+        if metodo_selecionado == "personid":
+            self.lblMethod.config(text="Digite o CPF:")
+        else:
+            self.lblMethod.config(text="Digite o PersonId:")
+
+
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = Application(root)
+    root.mainloop()
